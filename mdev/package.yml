@@ -2,12 +2,10 @@ Package: iwhttp
 Maintainer: Marmalade Package Team <packages@ideaworkslabs.com>
 Mkbs: 
  - iwhttp.mkb
- - iwhttps.mkb
 Description: |
  iwhttp is the library for socket based work with http and https protocols
 Libraries:
  - iwhttp
- - iwhttps
 Contents-Source:
  - iwhttp.mkb
  - iwhttps.mkb
