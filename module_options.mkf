@@ -1,0 +1,30 @@
+# Common options we always want for sdk modules
+if {{ os.name == 'nt' }}
+{
+    if {{ option psp or option psp-minis }}
+        # PSP tools works from VS2005
+        option buildenv=vc8
+    else
+        # Use vc6 so the libs we produce will be most compatible
+        option buildenv=vc6
+}
+elif {{ sys.platform == 'darwin' }}
+{
+    # On darwin we force scons as the build env otherwise
+    # we get the default which is xcode
+    # On linux and windows we only ever compile with rvct
+    # but this option makes no sence of darwin where rvct
+    # doen't exists
+    option buildenv=scons
+}
+
+options
+{
+    lib
+    strict-mkb
+    compile-debug-as-release    # Inconsistently setting this option causes linker errors on gcc
+    optimise-size
+    compile-thumb               # Inconsistently setting this option causes runtime crashes
+    rvct-version=3.0
+    module_path="."             # Search for subproject mkfs alongside mkb first
+}
