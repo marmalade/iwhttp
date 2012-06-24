@@ -1,0 +1,35 @@
+#!/usr/bin/env mkb
+subproject ../module_options
+
+options
+{
+    strict
+    use-sdklibs
+}
+
+defines
+{
+    IW_TRACE_ALL_CHANNELS=0
+    IW_TRACE_CHANNEL_HTTP_VERBOSE=2
+}
+
+debug_defines
+{
+    IW_USE_TRACING
+    IW_USE_ASSERTIONS
+}
+
+define IW_MKB_IWHTTP
+subprojects
+{
+    iwhttp
+}
+
+files
+{
+    (src)
+    ["src"]
+    IwURI.cpp
+    IwUriEscape.cpp
+    IwHTTP.cpp
+}

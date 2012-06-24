@@ -1,0 +1,44 @@
+files
+{
+    (h)
+    ["h"]
+    IwURI.h
+    IwUriEscape.h
+    IwHTTP.h
+
+    (docs)
+    ["http docs"]
+    iwhttp.config.txt
+    iwhttp_public.defines.txt
+}
+
+includepath h
+
+if {{ defined IW_HTTP_SSL }}
+{
+    library
+    {
+        ".,iwhttps"
+    }
+}
+else
+{
+    library
+    {
+        ".,iwhttp"
+    }
+}
+
+subproject iwcore
+
+if {{ not defined IW_MKB_IWHTTP }}
+{
+    if {{ defined IW_HTTP_SSL }}
+    {
+#       extproject iwhttps
+    }
+    else
+    {
+#       extproject iwhttp
+    }
+}

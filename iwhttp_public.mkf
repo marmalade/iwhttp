@@ -1,0 +1,16 @@
+subproject iwutil
+
+if {{ defined IW_HTTP_SSL }}
+{
+    library
+    {
+        ".,iwhttps"
+    }
+}
+else
+{
+    library
+    {
+        ".,iwhttp"
+    }
+}

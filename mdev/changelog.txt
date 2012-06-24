@@ -1,0 +1,7 @@
+iwhttp (1.0.0-1)
+
+  * Add changlog
+  * Add package.yml
+  * Add README.rst
+
+ -- Ivan Beliy <ivan.beliy@marmalademail.com>  Tue, 19 Jun 2012 11:05:12 +0000

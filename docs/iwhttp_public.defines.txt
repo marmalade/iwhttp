@@ -1,0 +1,5 @@
+IW_ASSERTION_CHANNEL_HTTP The HTTP assert channel
+IW_TRACE_CHANNEL_HTTP The HTTP trace channel
+IW_TRACE_CHANNEL_HTTP_VERBOSE The HTTP trace channel
+IW_HTTP_SSL Define to include https:// support
+IW_MKB_IWHTTP Used to guard against a loop in extproject

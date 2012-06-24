@@ -1,0 +1,40 @@
+#!/usr/bin/env mkb
+subproject ../module_options
+
+options
+{
+    strict-mkb # windows has warning in cyassl so we can't make this full scrict.
+    use-sdklibs
+}
+
+
+defines
+{
+    IW_HTTP_SSL
+    IW_TRACE_ALL_CHANNELS=0
+    IW_TRACE_CHANNEL_HTTP_VERBOSE=2
+}
+
+debug_defines
+{
+    IW_USE_TRACING
+    IW_USE_ASSERTIONS
+}
+
+
+define IW_MKB_IWHTTP
+subprojects
+{
+    iwhttp
+}
+
+subproject ../third_party/cyassl
+
+files
+{
+    (src)
+    ["src"]
+    IwURI.cpp
+    IwUriEscape.cpp
+    IwHTTP.cpp
+}
