@@ -5,7 +5,7 @@ Mkbs:
  - iwhttps.mkb
 Description: |
  iwhttp is the library for socket based work with http and https protocols
-Libraries:
+Libraries: 
  - iwhttp
  - iwhttps
 Contents-Source:
