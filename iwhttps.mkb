@@ -28,7 +28,7 @@ subprojects
     iwhttp
 }
 
-subproject ../third_party/cyassl
+subproject third_party/cyassl
 
 files
 {
