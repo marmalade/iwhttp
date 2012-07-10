@@ -16,3 +16,8 @@ Contents-Source:
  - README.rst
 Contents:
  - README.rst
+ - h/IwHTTP.h
+ - h/IwURI.h
+ - h/IwUriEscape.h
+
+
