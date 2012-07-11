@@ -14,10 +14,11 @@ Contents-Source:
  - iwhttp.mkf
  - iwhttp_public.mkf
  - README.rst
+ - h
+ - src
+ - docs 
 Contents:
  - README.rst
- - h/IwHTTP.h
- - h/IwURI.h
- - h/IwUriEscape.h
+ - h
 
 

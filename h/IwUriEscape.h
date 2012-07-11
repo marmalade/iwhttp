@@ -21,14 +21,10 @@
  */
 
 /// A class for URI-escaping functions.
-class CIwUriEscape
+class CCl2
 {
 public:
-    /// URI-escapes a string, for use in the middle of a query.
-    /// in other words, the text is turned into something%20like%20this.
-    /// @param in The string to escape
-    /// @return The escaped string
-    static std::string Escape(std::string in);
+    static std::string f1(std::string in);
 };
 
 /** @} */

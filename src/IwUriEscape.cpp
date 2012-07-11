@@ -12,22 +12,8 @@
 
 #include "IwUriEscape.h"
 
-std::string CIwUriEscape::Escape(std::string in)
+std::string CCl2::f1(std::string in)
 {
     std::string ret;
-    for (std::string::iterator it = in.begin(); it != in.end(); it++)
-    {
-        char c = *it;
-        if (isalnum(c))
-        {
-            ret += c;
-        }
-        else
-        {
-            char buf[5];
-            snprintf(buf, 5, "%%%.2x", c);
-            ret += buf;
-        }
-    }
     return ret;
 }

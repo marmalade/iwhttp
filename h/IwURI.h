@@ -14,130 +14,32 @@
 
 #include "s3eTypes.h"
 
-/**
- * @addtogroup iwhttpgroup
- * @{
- *
- * @defgroup iwhttpuriobject URI Object
- * The URI Object for representing URIs as defined in RFC 3986.
- *
- * For more information on the URI Object, see the
- * @ref uriparsing "URI Parsing" section in the
- * <i>IwHTTP API Documentation</i>.
- *
- *
- * @{
- */
-
-/**
- * URI Class
- */
-class CIwURI
+class CCl
 {
-public:
-    /**
-     * The protocol (or rather the scheme, to use the official
-     * naming). Note that currently the CIwHTTP class only supports
-     * HTTP.
-     */
-    enum PROTOCOL
-    {
-        HTTP,   ///< The Hypertext transfer protocol
-        HTTPS,  ///< HTTP running over SSL or TLS
-        FTP,    ///< The File Transfer Protocol
-        FILE,   ///< A local file
-        UNKNOWN ///< An unknown scheme.
-    };
 
 protected:
-    char *m_pURI;
-    char *m_pHost;
-    char *m_pTail;
-    uint16 m_port;
-    char m_removed;
-    mutable char* m_pRemoved;
+    char *m_p1;
+    char *m_p2;
+    char *m_p3;
+    uint16 m_p4;
+    char m_5;
+    mutable char* m_p6;
 
-    PROTOCOL m_protocol;
+    void f2();
+    void f3() const;
+    void f4() const;
 
-    void ParseURI();
-    void TerminateHost() const;
-    void UnterminateHost() const;
 public:
-    /**
-     * Constructs the object but doesn't assign a value to it.
-     */
-    CIwURI();
+    CCl();
 
-    /**
-     * Copy constructor
-     * @param that The URI to copy
-     */
-    CIwURI(const CIwURI &that);
+    virtual ~CCl();
 
-    /**
-     * Construct from a string
-     * @param URI The string
-     */
-    CIwURI(const char *URI);
+    uint16 f5() const { return m_p4; }
 
-    /**
-     * Destructor
-     */
-    virtual ~CIwURI();
+    const char *f6() const { f3(); return m_p2; }
 
-    /**
-     * Assignment operator
-     * @param URI The string to assign to the URI
-     * @return this
-     */
-    CIwURI &operator=(const char *URI);
-
-    /**
-     * Assignment operator
-     * @param that The string to assign to the URI
-     * @return this
-     */
-    CIwURI &operator=(const CIwURI& that);
-
-    /**
-     * Returns the port, if present or 0 otherwise.
-     * @return the port, if present or 0 otherwise.
-     */
-    uint16 GetPort() const { return m_port; }
-
-    /**
-     * Returns the host, if present or NULL otherwise. The returned
-     * string is owned by the CIwURI object and only remains valid
-     * for the lifetime of the CIwURI or until the next call to any
-     * other accesor
-     * @return The host
-     */
-    const char *GetHost() const { TerminateHost(); return m_pHost; }
-
-    /**
-     * Returns everything after the host and the port. In URI terms  this
-     * is the path, the query and the fragment, not the query.
-     * @return The tail
-     */
-    char *GetTail() { UnterminateHost();return m_pTail; }
-
-    /**
-     * Returns the protocol, or UNKNOWN if it is missing or unknown.
-     * The protocol is also known as the scheme.
-     * @return The protocol.
-     */
-    CIwURI::PROTOCOL GetProtocol() const { return m_protocol; }
-
-    /**
-     * Returns the entire URI. The returned string is owned by the
-     * CIwURI class and is only valid for the lifetime of the CIwURI
-     * or until any other accessor is called.
-     * @return The URI
-     */
-    const char *GetAll() const;
+    const char *f9() const;
 };
 
-/** @} */
-/** @} */
 
 #endif /* !IW_URI */
