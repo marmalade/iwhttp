@@ -18,7 +18,10 @@ Contents-Source:
  - src
  - docs 
 Contents:
+ - iwhttp.mkf
+ - iwhttp_public.mkf
  - README.rst
+ - docs
  - h
 
 
