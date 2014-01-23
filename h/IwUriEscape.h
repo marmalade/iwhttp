@@ -1,10 +1,10 @@
 /*
- * Copyright (C) 2001-2012 Ideaworks3D Ltd.
- * All Rights Reserved.
+ * (C) 2001-2012 Marmalade. All Rights Reserved.
  *
  * This document is protected by copyright, and contains information
- * proprietary to Ideaworks Labs.
- * This file consists of source code released by Ideaworks Labs under
+ * proprietary to Marmalade.
+ *
+ * This file consists of source code released by Marmalade under
  * the terms of the accompanying End User License Agreement (EULA).
  * Please do not use this program/source code before you have read the
  * EULA and have agreed to be bound by its terms.
@@ -21,10 +21,14 @@
  */
 
 /// A class for URI-escaping functions.
-class CCl2
+class CIwUriEscape
 {
 public:
-    static std::string f1(std::string in);
+    /// URI-escapes a string, for use in the middle of a query.
+    /// in other words, the text is turned into something%20like%20this.
+    /// @param in The string to escape
+    /// @return The escaped string
+    static std::string Escape(std::string in);
 };
 
 /** @} */

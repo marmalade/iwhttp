@@ -1,5 +1,5 @@
 #!/usr/bin/env mkb
-subproject module_options
+subproject ../module_options
 
 options
 {
