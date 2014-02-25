@@ -71,12 +71,23 @@ public:
         NONE,
         READ_TIMEOUT
     } ErrorStatus;
+    enum SendType {
+        GET,
+        POST,
+        HEAD,
+        PUT,
+        DELETE
+    };
 
 protected:
+
     CIwURI m_URI;
     int m_socket;
     s3eSocket *m_pSocket;
     s3eInetAddress m_addr;
+
+    SendType m_Type;
+    bool m_SendingData; //This is a PUT or POST
 
     // General flags.
     bool m_bGetInProgress;
@@ -233,6 +244,8 @@ protected:
     static int32 DoCallback(void *, void *);
 
     void AddChunked(Data& f);
+
+    s3eResult Send(SendType type, const char *URI, const char* Body, int32 BodyLength, s3eCallback callback, void *data);
 public:
     /**
      * Performs a GET request. If supplied, the callback will be
@@ -241,8 +254,8 @@ public:
      * @param callback A callback that is called when the headers have
      * been received. The callback is also called when the operation fails;
      * use GetStatus to find out why.
-     * Get and Posts are not concurrent. Calling Get whilst another
-     * Get or Post is outstanding will cancel the previous operation.
+     * Operations are not concurrent. Calling Get whilst another
+     * operation is outstanding will cancel the previous operation.
      * @param data User data argument to the callback.
      * @return A standard s3e result code to indicate if the operation
      * succeeded.
@@ -253,22 +266,69 @@ public:
      * Performs a POST request. The callback will be
      * called when all the headers have been received. The body must
      * be supplied all at once, and must remain valid until the
-     * response headers are received. An empty body is treated as a GET
-     * request.
+     * response headers are received.
      * @param URI The URI to fetch.
      * @param callback A callback that is called when all the headers have
      * been received. The callback is also called when the operation fails;
      * it should call GetStatus to find out why it has been called.
-     * Get and Posts are not concurrent. Calling Post whilst another
-     * Get or Post is outstanding will cancel the previous operation.
+     * Operations are not concurrent. Calling Post whilst another
+     * operation is outstanding will cancel the previous operation.
      * @param Body A pointer to the request body
      * @param BodyLength the length of the request body in bytes.
      * @param data User data argument to the callback.
      * @return A standard s3e result code to indicate if the operation
      * succeeded.
      */
-    s3eResult Post(const char *URI, const char* Body, int32 BodyLength,
-                   s3eCallback callback, void *data);
+    s3eResult Post(const char *URI, const char* Body, int32 BodyLength, s3eCallback callback, void *data);
+
+    /**
+     * Performs a HEAD request. If supplied, the callback will be
+     * called when all the headers have been received.
+     * @param URI The URI to fetch.
+     * @param callback A callback that is called when the headers have
+     * been received. The callback is also called when the operation fails;
+     * use GetStatus to find out why.
+     * Operations are not concurrent. Calling Head whilst another
+     * operation is outstanding will cancel the previous operation.
+     * @param data User data argument to the callback.
+     * @return A standard s3e result code to indicate if the operation
+     * succeeded.
+     */
+    s3eResult Head(const char *URI, s3eCallback callback, void *data);
+
+    /**
+     * Performs a PUT request. The callback will be
+     * called when all the headers have been received. The body must
+     * be supplied all at once, and must remain valid until the
+     * response headers are received.
+     * @param URI The URI to fetch.
+     * @param callback A callback that is called when all the headers have
+     * been received. The callback is also called when the operation fails;
+     * it should call GetStatus to find out why it has been called.
+     * Operations are not concurrent. Calling Put whilst another
+     * operation is outstanding will cancel the previous operation.
+     * @param Body A pointer to the request body
+     * @param BodyLength the length of the request body in bytes.
+     * @param data User data argument to the callback.
+     * @return A standard s3e result code to indicate if the operation
+     * succeeded.
+     */
+    s3eResult Put(const char *URI, const char* Body, int32 BodyLength, s3eCallback callback, void *data);
+
+    /**
+     * Performs a DELETE request. If supplied, the callback will be
+     * called when all the headers have been received.
+     * @param URI The URI to fetch.
+     * @param callback A callback that is called when the headers have
+     * been received. The callback is also called when the operation fails;
+     * use GetStatus to find out why.
+     * Operations are not concurrent. Calling Delete whilst another
+     * operation is outstanding will cancel the previous operation.
+     * @param data User data argument to the callback.
+     * @return A standard s3e result code to indicate if the operation
+     * succeeded.
+     */
+    s3eResult Delete(const char *URI, s3eCallback callback, void *data);
 
     /**
      * Cancel the current GET or POST request.
@@ -296,7 +356,15 @@ public:
      * calling this function to see if the operation has actually
      * succeeded.
      */
-    s3eResult GetStatus() const { return m_Status;};
+    s3eResult GetStatus() const { return m_Status;}
+
+    /**
+     * Returns the type of the current or last operation.
+     *
+     * @return the type of operation that was or is being performed.
+     * This is one of GET, POST, HEAD, DELETE or PUT.
+     */
+    SendType GetType() const { return m_Type; }
 
     /**
      * Gets a response header as an integer. This will only work

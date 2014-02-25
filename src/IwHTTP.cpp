@@ -151,12 +151,6 @@ CIwHTTP::CIwHTTP() :
 CIwHTTP::~CIwHTTP()
 {
     Cancel();
-
-    // clear form data
-    for (std::list<Data>::iterator it = m_data.begin(); it != m_data.end(); ++it)
-        if (it->m_file != NULL)
-            s3eFileClose(it->m_file);
-    m_data.clear();
 }
 
 bool CIwHTTP::EnqueueDNSRequest(const char *host, s3eInetAddress *addr)
@@ -419,16 +413,30 @@ void CIwHTTP::DoConnectCallback(s3eResult result)
     m_request_idx = 0;
 
     Data data;
-    bool post = false;
-
-    if (!m_data.empty())
-        post = true;
 
     // Connected, fire off the the request
-    if (!post)
-        data.m_value += "GET ";
-    else
-        data.m_value += "POST ";
+    switch (m_Type)
+    {
+        case CIwHTTP::GET:
+            data.m_value += "GET ";
+            break;
+        case CIwHTTP::POST:
+            data.m_value += "POST ";
+            break;
+        case CIwHTTP::HEAD:
+            data.m_value += "HEAD ";
+            break;
+        case CIwHTTP::PUT:
+            data.m_value += "PUT ";
+            break;
+        case CIwHTTP::DELETE:
+            data.m_value += "DELETE ";
+            break;
+        default:
+            IwTrace(HTTP, ("(Invalid type)"));
+            Fail();
+            return;
+    }
 
     if (m_usingProxy)
     {
@@ -454,7 +462,7 @@ void CIwHTTP::DoConnectCallback(s3eResult result)
     {
         if (m_req_headers[i].m_name == "Host" ||
             m_req_headers[i].m_name == "Content-Length" ||
-          (!post && m_req_headers[i].m_name.find("Content-") == 0))
+          (!m_SendingData && m_req_headers[i].m_name.find("Content-") == 0))
             continue;
 
         if (m_req_headers[i].m_name == "User-Agent")
@@ -479,7 +487,7 @@ void CIwHTTP::DoConnectCallback(s3eResult result)
         data.m_value += s3eDeviceGetString(S3E_DEVICE_S3E_VERSION);
     }
 
-    if (post)
+    if (m_SendingData)
     {
         if (m_post_chunked)
         {
@@ -540,14 +548,30 @@ void CIwHTTP::Fail()
 
 s3eResult CIwHTTP::Get(const char *URI, s3eCallback cb, void *pUserData)
 {
-    // For now we actually indicate if it's GET or POST by whether we
-    // have a post body. So what we do for GET and POST is exactly the
-    // same, only with a NULL body for GET
-    return Post(URI, NULL, 0, cb, pUserData);
+    return Send(GET, URI, NULL, 0, cb, pUserData);
 }
 
-s3eResult CIwHTTP::Post(const char *URI, const char* Body, int32 BodyLength,
-                        s3eCallback cb, void *pUserData)
+s3eResult CIwHTTP::Head(const char *URI, s3eCallback cb, void *pUserData)
+{
+    return Send(HEAD, URI, NULL, 0, cb, pUserData);
+}
+
+s3eResult CIwHTTP::Post(const char *URI, const char* Body, int32 BodyLength, s3eCallback cb, void *pUserData)
+{
+    return Send(POST, URI, Body, BodyLength, cb, pUserData);
+}
+
+s3eResult CIwHTTP::Put(const char *URI, const char* Body, int32 BodyLength, s3eCallback cb, void *pUserData)
+{
+    return Send(PUT, URI, Body, BodyLength, cb, pUserData);
+}
+
+s3eResult CIwHTTP::Delete(const char *URI, s3eCallback cb, void *pUserData)
+{
+    return Send(DELETE, URI, NULL, 0, cb, pUserData);
+}
+
+s3eResult CIwHTTP::Send(SendType type, const char *URI, const char* Body, int32 BodyLength, s3eCallback cb, void *pUserData)
 {
     IwAssert(HTTP, URI);
 
@@ -639,12 +663,12 @@ s3eResult CIwHTTP::Post(const char *URI, const char* Body, int32 BodyLength,
         m_data.push_back(f);
     }
 
-    bool ispost = false;
+    m_Type = type;
+    m_SendingData = (type == POST) || (type == PUT);
 
     // insert post data
     if (Body != NULL && BodyLength > 0)
     {
-        ispost = true;
         Data f;
 
         // Use length to make sure null characters don't terminate str
@@ -672,7 +696,7 @@ s3eResult CIwHTTP::Post(const char *URI, const char* Body, int32 BodyLength,
 
     // close off http (do after length so length does not include this)
     // do not append crlf to post body
-    if (!m_data.empty() && !ispost)
+    if (!m_data.empty() && m_SendingData)
     {
         m_data.back().m_value += "\r\n";
         m_data.back().m_size += 2;
@@ -771,6 +795,11 @@ s3eResult CIwHTTP::Cancel()
         m_pSocket = NULL;
     }
 
+    // clear form data
+    for (std::list<Data>::iterator it = m_data.begin(); it != m_data.end(); ++it)
+        if (it->m_file != NULL)
+            s3eFileClose(it->m_file);
+    m_data.clear();
 
     m_bGetInProgress = false;
 
